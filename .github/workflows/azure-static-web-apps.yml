@@ -35,11 +35,12 @@ jobs:
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          # Azure names this secret automatically when you link SWA to GitHub.
+          # Check: Repo → Settings → Secrets → AZURE_STATIC_WEB_APPS_API_TOKEN_*
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLACK_PLANT_0EFFD6B00 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: /
-          # Vite outputs to dist/, not build/ (Create React App default).
           app_artifact_location: dist
           skip_app_build: true
 
@@ -51,5 +52,5 @@ jobs:
       - name: Close Static Web Apps preview
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLACK_PLANT_0EFFD6B00 }}
           action: close
