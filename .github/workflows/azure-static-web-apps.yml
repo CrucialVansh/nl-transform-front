@@ -30,18 +30,18 @@ jobs:
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-        run: npm run build
+        run: |
+          npm run build
+          cp staticwebapp.config.json dist/
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          # Azure names this secret automatically when you link SWA to GitHub.
-          # Check: Repo → Settings → Secrets → AZURE_STATIC_WEB_APPS_API_TOKEN_*
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLACK_PLANT_0EFFD6B00 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: /
-          app_artifact_location: dist
+          # Point app_location at the built output only — avoids uploading node_modules.
+          app_location: dist
           skip_app_build: true
 
   close_pull_request:
