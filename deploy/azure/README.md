@@ -41,13 +41,15 @@ npm run build
 
 ## GitHub Actions
 
-The workflow at `.github/workflows/azure-static-web-apps.yml` builds and deploys on push to `main`.
+The workflow at `.github/workflows/azure-static-web-apps.yml` builds with Vite (output: `dist/`) and deploys with `skip_app_build: true`.
+
+If Azure auto-generated a workflow when you created the Static Web App, **delete the duplicate** — it may expect `build/` (Create React App) instead of `dist/` (Vite).
 
 Required repository secrets:
 
 | Secret | Purpose |
 |---|---|
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` | From Azure SWA → Manage deployment token |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_*` | Auto-created by Azure when you link SWA to GitHub (e.g. `..._BLACK_PLANT_0EFFD6B00`) |
 | `VITE_API_BASE_URL` | Backend URL |
 | `VITE_API_KEY` | Shared API key |
 

@@ -21,3 +21,7 @@ export async function getUploadStatus(uploadedFileId) {
   const response = await authenticatedFetch(`/api/uploads/${uploadedFileId}/status`)
   return apiFetchWithAccepted(response)
 }
+
+export async function getUploadData(uploadedFileId, page = 1, pageSize = 50) {
+  return apiFetch(`/api/uploads/${uploadedFileId}/data?page=${page}&page_size=${pageSize}`)
+}

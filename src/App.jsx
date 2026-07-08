@@ -11,13 +11,14 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import { useCallback, useEffect, useState } from 'react'
 import { cancelJob, getJobResults, getJobStatus, invokeTransform } from './api/jobs'
-import { getUploadStatus, listUploads, uploadFile } from './api/uploads'
+import { getUploadData, getUploadStatus, listUploads, uploadFile } from './api/uploads'
 import { queryKeys } from './api/queryKeys'
 import ErrorAlert from './components/common/ErrorAlert'
 import JobProgressPanel from './components/job/JobProgressPanel'
 import ResultsTable from './components/job/ResultsTable'
 import FileSidebar from './components/layout/FileSidebar'
 import TransformForm from './components/transform/TransformForm'
+import FileDataPreview from './components/upload/FileDataPreview'
 import FileUploadPanel from './components/upload/FileUploadPanel'
 import {
   TERMINAL_JOB_STATUSES,
@@ -48,6 +49,9 @@ export default function App() {
 
   const [resultsPage, setResultsPage] = useState(1)
   const [resultsPageSize, setResultsPageSize] = useState(50)
+
+  const [previewPage, setPreviewPage] = useState(1)
+  const [previewPageSize, setPreviewPageSize] = useState(50)
 
   const uploadsQuery = useQuery({
     queryKey: queryKeys.uploads.all,
@@ -85,6 +89,13 @@ export default function App() {
       error: uploadStatusQuery.error.message,
     }))
   }, [uploadStatusQuery.error])
+
+  const fileDataQuery = useQuery({
+    queryKey: queryKeys.uploadData(activeFileId, previewPage, previewPageSize),
+    queryFn: () => getUploadData(activeFileId, previewPage, previewPageSize),
+    enabled: Boolean(activeFileId) && uploadState.phase === 'ready',
+    placeholderData: keepPreviousData,
+  })
 
   const jobStatusQuery = useQuery({
     queryKey: queryKeys.jobStatus(activeJobId),
@@ -186,6 +197,7 @@ export default function App() {
     setSubmitError(null)
     setSelectedColumns([])
     setResultsPage(1)
+    setPreviewPage(1)
   }
 
   const handleSelectFile = async (fileId) => {
@@ -342,6 +354,21 @@ export default function App() {
                   {uploadState.filename}
                 </Typography>
               </Paper>
+            )}
+
+            {uploadState.phase === 'ready' && activeFileId && (
+              <FileDataPreview
+                data={fileDataQuery.data}
+                page={previewPage}
+                pageSize={previewPageSize}
+                onPageChange={setPreviewPage}
+                onPageSizeChange={(size) => {
+                  setPreviewPageSize(size)
+                  setPreviewPage(1)
+                }}
+                loading={fileDataQuery.isFetching}
+                error={fileDataQuery.error?.message}
+              />
             )}
 
             {showTransformForm && (
